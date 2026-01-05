@@ -45,7 +45,7 @@ Before you begin, ensure you have:
 
 ### Step 1: Import the Workflow
 
-1. Copy the contents of `Amul Protien (2).json`
+1. Copy the contents of `Amul Protien.json`
 2. In n8n, go to **Workflows** → **Import from File** or **Import from URL**
 3. Paste the JSON content
 4. Click **Import**
