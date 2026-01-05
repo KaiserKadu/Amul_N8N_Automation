@@ -1,4 +1,4 @@
-# 🧀 Amul Stock Checker with Voice Notifications
+# 🧀 Amul Protien Stock Checker with Voice Notifications
 
 An intelligent automation workflow that monitors Amul product availability and calls your phone when items are back in stock. No more manual refreshing or missed restocks!
 
