@@ -10,7 +10,7 @@ This n8n workflow automates the entire stock checking process for Amul protein p
 2. **Reverse engineers authentication** - Extracts and maintains Amul's session cookies
 3. **Monitors stock availability** - Continuously checks product availability for your location
 4. **Calls you instantly** - Uses ElevenLabs AI agent to make a real phone call when your selected products are in stock
-5. **Smart retry logic** - Automatically retries every 3 minutes if products are out of stock
+5. **Smart retry logic** - Automatically retries every few minutes (editable) if products are out of stock
 
 ## ✨ Key Features
 
