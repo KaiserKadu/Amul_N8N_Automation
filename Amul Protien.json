@@ -1,0 +1,650 @@
+{
+  "name": "Amul Protien",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://shop.amul.com/api/1/entity/ms.products?fields[name]=1&fields[brand]=1&fields[categories]=1&fields[collections]=1&fields[alias]=1&fields[sku]=1&fields[price]=1&fields[compare_price]=1&fields[original_price]=1&fields[images]=1&fields[metafields]=1&fields[discounts]=1&fields[catalog_only]=1&fields[is_catalog]=1&fields[seller]=1&fields[available]=1&fields[inventory_quantity]=1&fields[net_quantity]=1&fields[num_reviews]=1&fields[avg_rating]=1&fields[inventory_low_stock_quantity]=1&fields[inventory_allow_out_of_stock]=1&fields[default_variant]=1&fields[variants]=1&fields[lp_seller_ids]=1&filters[0][field]=categories&filters[0][value][0]=protein&filters[0][operator]=in&filters[0][original]=1&facets=true&facetgroup=default_category_facet&limit=32&total=1&start=0&cdc=1m&substore=66506004a7cddee1b8adb014",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        -496
+      ],
+      "id": "fc182fea-cf40-4396-b49f-5d8492da8406",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://shop.amul.com/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        688,
+        -432
+      ],
+      "id": "6446c089-f302-4eca-8146-9ccd3d71d9de",
+      "name": "get amul"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/convai/twilio/outbound-call",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "elevenLabsApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"agent_id\": \"agent_3201k6zhdnwyex7rjzj6aw9n5k7s\", \"agent_phone_number_id\": \"phnum_7801k6zhcr3aesfs74q507kg0r5n\", \"to_number\": \"{{ $json.phNo }}\", \"conversation_initiation_client_data\":{\"conversation_config_override\":{\"agent\":{\"first_message\" : \"Hello, this is a notification from your amul n8n automation , that the following products are available : {{ $json.userItemsAvail }}\"}}}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        -304
+      ],
+      "id": "60418fad-d02a-4646-8091-a0b0be4174df",
+      "name": "Call Agent",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "FmHQEo2jvJ0xaE2D",
+          "name": "ElevenLabs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -496
+      ],
+      "id": "389e74da-bed4-4996-bf5d-ebd5daef5522",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9ef4907f-68aa-4cec-bcba-9c745f517063",
+              "leftValue": "={{ $json.available }}",
+              "rightValue": "True",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        -496
+      ],
+      "id": "b2893fd9-d505-4731-8f77-fc17242025b1",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "be349da1-e40b-441b-beb5-2e30f230f36f",
+              "leftValue": "={{ $json.messages[0].level }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        -496
+      ],
+      "id": "ace08885-04be-487d-a794-2d527edd130f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://shop.amul.com/",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1104,
+        -432
+      ],
+      "id": "c03c5ef8-671e-4a6c-afa9-5a487b661056",
+      "name": "get amul1"
+    },
+    {
+      "parameters": {
+        "formTitle": "Amul Protien Caller",
+        "formDescription": "Set Up the workflow for getting your product",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Pincode",
+              "fieldType": "number",
+              "placeholder": "123456",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Phone Number",
+              "fieldType": "number",
+              "placeholder": "1234567890",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -1328,
+        -432
+      ],
+      "id": "21553797-a540-407e-9843-0c34269fc954",
+      "name": "On form submission",
+      "webhookId": "35f2f1ac-7952-4ef1-8999-763543d3b04a"
+    },
+    {
+      "parameters": {
+        "url": "=https://shop.amul.com/entity/pincode?limit=50&filters[0][field]=pincode&filters[0][value]={{$('On form submission').item.json.Pincode}}&filters[0][operator]=regex&cf_cache=1h",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cookie",
+              "value": "={{ $json.cookies }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -656,
+        -432
+      ],
+      "id": "1fb4a02a-12c8-42af-8023-33d896c95cba",
+      "name": "get pincode",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet data = {};\ndata.subStore = $input.first().json.body.records[0].substore\ndata.subStoreMap = [\n  {\n    _id: '66506005147d6c73c1110115',\n    name: 'Goa',\n    alias: 'goa',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506004aa64743ceefbed25',\n    name: 'Telangana',\n    alias: 'telangana',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506004a7cddee1b8adb014',\n    name: 'Pune BR',\n    alias: 'pune-br',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506004145c16635e6cc914',\n    name: 'Solapur BR',\n    alias: 'solapur-br',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506002c8f2d6e221b91988',\n    name: 'Nashik BR',\n    alias: 'nashik-br',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506002aa64743ceefbecf1',\n    name: 'Aurangabad BR',\n    alias: 'aurangabad-br',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506002998183e1b1935f41',\n    name: 'Chhattisgarh',\n    alias: 'chhattisgarh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66506000c8f2d6e221b9193a',\n    name: 'Mumbai BR',\n    alias: 'mumbai-br',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '6650600062e3d963520d0bc3',\n    name: 'Dadra & Nagar Haveli',\n    alias: 'dadra-and-nagar-haveli',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '6650600024e61363e088c526',\n    name: 'West Bengal',\n    alias: 'west-bengal',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffeaf6a3c7411d2f62c',\n    name: 'Odisha',\n    alias: 'odisha',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffe91ab653d60a3df2d',\n    name: 'Sikkim',\n    alias: 'sikkim',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffe78117873bb53b6ad',\n    name: 'Tripura',\n    alias: 'tripura',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffd998183e1b1935e21',\n    name: 'Mizoram',\n    alias: 'mizoram',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffd672747740fb389c7',\n    name: 'Meghalaya',\n    alias: 'meghalaya',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffd24e61363e088c4a5',\n    name: 'Nagaland',\n    alias: 'nagaland',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffbf40e263cf5588098',\n    name: 'Manipur',\n    alias: 'manipur',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffb998183e1b1935dee',\n    name: 'Jharkhand',\n    alias: 'jharkhand',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ffb6510ee3d5903fef8',\n    name: 'Assam',\n    alias: 'assam',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff9af6a3c7411d2f55f',\n    name: 'Bihar',\n    alias: 'bihar',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff978117873bb53b643',\n    name: 'Arunachal Pradesh',\n    alias: 'arunachal-pradesh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff924e61363e088c414',\n    name: 'Uttar Pradesh E',\n    alias: 'uttar-pradesh-e',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff8c8f2d6e221b9180c',\n    name: 'UP NCR',\n    alias: 'up-ncr',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff8a7cddee1b8adae9d',\n    name: 'Uttrakhand',\n    alias: 'uttrakhand',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff824e61363e088c3dd',\n    name: 'Rajasthan',\n    alias: 'rajasthan',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff6f40e263cf5587fb5',\n    name: 'J&K',\n    alias: 'jandk',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff6d9346de216752cd7',\n    name: 'Madhya Pradesh',\n    alias: 'madhya-pradesh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff6145c16635e6cc7c1',\n    name: 'Ladakh',\n    alias: 'ladakh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff5af6a3c7411d2f4b2',\n    name: 'Haryana',\n    alias: 'haryana',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff578117873bb53b56a',\n    name: 'Tamil Nadu',\n    alias: 'tamil-nadu-1',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff5145c16635e6cc74d',\n    name: 'Delhi',\n    alias: 'delhi',\n    metafields: {},\n    settings: {\n      contact_phone: '',\n      description: ''\n    },\n    sort_order: 0,\n    updated_on: 1726206690251\n  },\n  {\n    _id: '66505ff3998183e1b1935d0e',\n    name: 'Punjab',\n    alias: 'punjab',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff378117873bb53b542',\n    name: 'Andhra Pradesh',\n    alias: 'andhra-pradesh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff312a50963f24870e8',\n    name: 'Pondicherry',\n    alias: 'pondicherry',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff2998183e1b1935ccd',\n    name: 'Kerala',\n    alias: 'kerala',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff26510ee3d5903fda9',\n    name: 'Himachal Pradesh',\n    alias: 'himachal-pradesh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff1672747740fb388ec',\n    name: 'Chandigarh',\n    alias: 'chandigarh',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff0998183e1b1935c75',\n    name: 'Karnataka',\n    alias: 'karnataka',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff06510ee3d5903fd42',\n    name: 'Gujarat',\n    alias: 'gujarat',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  },\n  {\n    _id: '66505ff024e61363e088c306',\n    name: 'Daman & DIU',\n    alias: 'daman-and-diu',\n    metafields: {},\n    settings: {},\n    sort_order: 0\n  }\n]\nlet subStoreObj = data.subStoreMap.find((x)=> x.alias === data.subStore)\n$input.first().json.data = subStoreObj\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -432
+      ],
+      "id": "79d1d4f2-3e6c-48c0-9fcd-debedc767f9c",
+      "name": "create body for preferences"
+    },
+    {
+      "parameters": {
+        "url": "=https://shop.amul.com/api/1/entity/ms.products?fields[name]=1&fields[brand]=1&fields[categories]=1&fields[collections]=1&fields[alias]=1&fields[sku]=1&fields[price]=1&fields[compare_price]=1&fields[original_price]=1&fields[images]=1&fields[metafields]=1&fields[discounts]=1&fields[catalog_only]=1&fields[is_catalog]=1&fields[seller]=1&fields[available]=1&fields[inventory_quantity]=1&fields[net_quantity]=1&fields[num_reviews]=1&fields[avg_rating]=1&fields[inventory_low_stock_quantity]=1&fields[inventory_allow_out_of_stock]=1&fields[default_variant]=1&fields[variants]=1&fields[lp_seller_ids]=1&filters[0][field]=categories&filters[0][value][0]=protein&filters[0][operator]=in&filters[0][original]=1&facets=true&facetgroup=default_category_facet&limit=32&total=1&start=0&cdc=1m&substore={{ $json.data._id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        -432
+      ],
+      "id": "081eb3e9-ccd1-4919-8d01-2bf194de2775",
+      "name": "get protien products",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d600401-9b8c-4fe8-9fe7-49a3e4f5bae1",
+              "name": "data",
+              "value": "={{ $json.data.map(item => {\nlet data = {}\ndata.name = item.name\ndata.alias = item.alias\nreturn data\n}) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -432
+      ],
+      "id": "dc8ba189-c096-41ee-a86f-849f7db52a47",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=\n\n[\n  {\n    \"fieldLabel\": \"Checkboxes\",\n    \"fieldType\": \"checkbox\",\n    \"fieldOptions\": {\n      \"values\": {{ $json.data.map(item =>{let temp = {}\ntemp.option = item.name\nreturn temp\n}) }}\n    }\n  }  \n]\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        -432
+      ],
+      "id": "d9818d6a-ad09-4566-a276-3ba4f29dbe2a",
+      "name": "Form",
+      "webhookId": "ef3406e4-9e2e-4290-a4df-6ec203223e35"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\n    \n    let raw   = $input.first().json.headers['set-cookie']\n    const list = Array.isArray(raw) ? raw : [raw];\n\n    const cookie = list\n      .map(s => String(s).split(';')[0].trim()); // Replace 'your_cookie_name'\n    console.log(cookie)\n    if (!cookie) {\n      throw new Error('Auth cookie not found in response');\n    }\n    let cookies = cookie[0];\n    for(let i = 1; i < cookie.length;i++){\n      cookies += ';'\n      cookies += cookie[i]\n    }\n    \n    return [{ json: { cookies } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        -432
+      ],
+      "id": "a71c6add-189a-4c55-b314-d284f86faa37",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "be349da1-e40b-441b-beb5-2e30f230f36f",
+              "leftValue": "={{ $json.statusMessage }}",
+              "rightValue": "OK",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -432,
+        -432
+      ],
+      "id": "68a69ed4-6e9e-4dd3-bc05-cc0aaa006cc1",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Add a new field called 'myNewField' to the JSON of the item\ndelete $input.item.json._id;\ndelete $input.item.json.seller;\ndelete $input.item.json.images;\ndelete $input.item.json.collections;\ndelete $input.item.json.categories;\ndelete $input.item.json.metafields;\ndelete $input.item.json.compare_price;\ndelete $input.item.json.lp_seller_ids;\ndelete $input.item.json.default_variant;\ndelete $input.item.json.variants;\n\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        -496
+      ],
+      "id": "24a1232d-0320-40dc-8c2c-36e287da6dba",
+      "name": "Normalize items"
+    },
+    {
+      "parameters": {
+        "jsCode": "let userSet = new Set($('Form').first().json.Checkboxes);\n\nlet itemsAvail = $input.all()\nlet userItemsAvail = []\n\nfor (let item of itemsAvail){\n  if(userSet.has(item.json.name)){\n  userItemsAvail.push(item.json.name)\n}\n}\n\n// for(let item in ){\n//   console.log(item)\n//   itemMap.\n// }\n\n\n// // Loop over input items and add a new field called 'myNewField' to the JSON of each one\n// for (const item of $input.all()) {\n//   item.json.myNewField = 1;\n// }\nlet phNo = `+91${$('On form submission').first().json['Your Phone Number']}`\nconsole.log(userItemsAvail)\nreturn {userItemsAvail,phNo};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        -496
+      ],
+      "id": "6b0159ba-d91c-4153-9ba4-5247dbe33323",
+      "name": "Get Union"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1c405041-89ff-49fa-a8f1-5d8edd71d657",
+              "leftValue": "={{ $json.userItemsAvail }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2256,
+        -496
+      ],
+      "id": "38ca1be4-9320-4990-81c3-2db1255ec7a9",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2480,
+        -496
+      ],
+      "id": "a83e786c-3778-4fd6-927f-8bb8cbd8041b",
+      "name": "Wait",
+      "webhookId": "23f1e327-cc1e-41ef-af86-99f136c743d0"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "get amul": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Normalize items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get amul",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get amul1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "get amul1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get pincode": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create body for preferences": {
+      "main": [
+        [
+          {
+            "node": "get protien products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get protien products": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form": {
+      "main": [
+        [
+          {
+            "node": "get amul",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "get pincode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "create body for preferences",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "get amul1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Get Union",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize items": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Union": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "get amul",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "def51662-7592-434a-bef9-ebb54fa42080",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cedfe162152411187fefced0ed5b2b4d86539afa370c2f5311bfad0f8da9f38c"
+  },
+  "id": "yzAeCNQwzLDUxb0Z",
+  "tags": []
+}
